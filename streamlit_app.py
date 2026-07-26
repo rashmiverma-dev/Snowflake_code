@@ -2,7 +2,6 @@
 import streamlit as st
 import os
 from snowflake.snowpark.functions import col
-from snowflake.snowpark.context import get_active_session
 
 
 
@@ -25,8 +24,9 @@ st.write(
 
 # st.write("You selected:", option)
 
-
-session = get_active_session()
+cnx= st.connect("snoflake")
+session = cnx.session()
+#session = get_active_session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col("Fruit_name"))
 #st.dataframe(data=my_dataframe, use_container_width=True)
 
