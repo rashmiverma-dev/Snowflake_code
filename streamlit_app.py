@@ -44,6 +44,10 @@ if selected_value:
 
     for fruit_selected in selected_value:
         ingredient_list += fruit_selected + ' '
+        st.subheader(fruit_selected + 'Nutrition Information')
+        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/{fruit_selected}")  
+        df = smoothiefroot_response.json()
+        st.dataframe(data=df,use_container_width=True)
 
     st.write(ingredient_list)
 
@@ -59,8 +63,4 @@ if selected_value:
         st.success('Your Smoothie is ordered!', icon="✅")
         #st.write(my_insert_stmt)
 
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")  
-st.text(smoothiefroot_response)
 
-df = smoothiefroot_response.json()
-st.dataframe(data=df,use_container_width=True)
