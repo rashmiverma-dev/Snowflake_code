@@ -2,6 +2,7 @@
 import streamlit as st
 import os
 from snowflake.snowpark.functions import col
+import requests  
 
 
 
@@ -50,10 +51,15 @@ if selected_value:
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order )
                     values ('""" + ingredient_list +"""','"""+ name_on_order +"""')"""
 
-    st.write(my_insert_stmt)
+    #st.write(my_insert_stmt)
     
     is_clicked = st.button("Submit order")
     if is_clicked:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
         #st.write(my_insert_stmt)
+
+smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")  
+st.text(smoothiefroot_response)
+
+st.json(smoothiefroot_response.json())
