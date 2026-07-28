@@ -3,7 +3,7 @@ import streamlit as st
 import os
 from snowflake.snowpark.functions import col
 import requests  
-
+import pandas as pd
 
 
 
@@ -28,9 +28,11 @@ st.write(
 cnx= st.connection("snowflake")
 session = cnx.session()
 #session = get_active_session()
-my_dataframe = session.table("smoothies.public.fruit_options").select(col("Fruit_name"))
+my_dataframe = session.table("smoothies.public.fruit_options").select(col("Fruit_name"),col("SEARCH_ON"))
 #st.dataframe(data=my_dataframe, use_container_width=True)
-
+#converting the snowpark DataFrame to a Pandas Dataframe so we can use the LOC function
+pd_df= my_dataframe.to_pandas()
+st.dataframe(pd_df)
 
 
 selected_value = st.multiselect("Choose up to 5 ingredients:",my_dataframe,max_selections=5)
@@ -44,8 +46,16 @@ if selected_value:
 
     for fruit_selected in selected_value:
         ingredient_list += fruit_selected + ' '
+    #added as part of lesson 12
+        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_selected, 'SEARCH_ON'].iloc[0]
+
+        if search_on is None:
+            search_on=fruit_selected
+        
+        st.write('The search value for ', fruit_selected,' is ', search_on, '.')
+    #added as part of lesson 12   
         st.subheader(fruit_selected + 'Nutrition Information')
-        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_selected}")  
+        smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")  
         df = smoothiefroot_response.json()
         st.dataframe(data=df,use_container_width=True)
 
