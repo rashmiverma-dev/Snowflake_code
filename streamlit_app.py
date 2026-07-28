@@ -62,4 +62,5 @@ if selected_value:
 smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")  
 st.text(smoothiefroot_response)
 
-st.json(smoothiefroot_response.json())
+df = st.json(smoothiefroot_response.json())
+st.dataframe(data=df,use_container_width=True)
